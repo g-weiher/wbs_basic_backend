@@ -30,4 +30,31 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  const orderId = req.params.id;
+  console.log(`request on orders with id = ${orderId}`);
+  if (!(orderId && /^\d+$/.test(orderId))) {
+    res.status(400).send();
+  } else {
+    try {
+      const data = await pool.query("SELECT * FROM orders WHERE id = $1", [
+        orderId,
+      ]);
+      if (data.rows.length === 0) {
+        res.status(404).send();
+      } else {
+        const order = await populate(data.rows[0]);
+        res.send({
+          operation: "success",
+          description: "fetched post by id",
+          data: order,
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      res.status(400).send("something went wrong");
+    }
+  }
+});
+
 module.exports = router;
