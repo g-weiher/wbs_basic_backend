@@ -5,15 +5,10 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
-const pool = require("./dbconfig");
+const usersRoutes = require("./routes/users");
+const ordersRoutes = require("./routes/orders");
 
-app.get("/", async (req, res) => {
-  try {
-    const response = await pool.query("SELECT * FROM orders");
-    res.send(response);
-  } catch (e) {
-    console.error(e);
-    res.status(400).send();
-  }
-});
+app.use("/users/", usersRoutes);
+app.use("/orders/", ordersRoutes);
+
 app.listen(port, () => console.log(`server listening to port ${port}...`));
