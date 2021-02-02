@@ -13,7 +13,7 @@ const populate = async (order) => {
 };
 
 router.get("/", async (req, res) => {
-  console.log("request on all posts");
+  console.log("request on all orders");
   try {
     const data = await pool.query("SELECT * FROM orders");
     const populatedOrders = await Promise.all(
@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
         const order = await populate(data.rows[0]);
         res.send({
           operation: "success",
-          description: "fetched post by id",
+          description: "fetched order by id",
           data: order,
         });
       }
