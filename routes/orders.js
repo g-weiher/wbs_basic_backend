@@ -27,17 +27,17 @@ router.get("/:id", async (req, res) => {
     res.status(400).send();
   } else {
     try {
-      const data = await pool.query("SELECT * FROM orders WHERE id = $1", [
-        orderId,
-      ]);
+      const data = await pool.query(
+        "SELECT orders.id, orders.price, orders.date, row_to_json(users.*) AS user FROM orders, users WHERE orders.user_id = users.id AND orders.id = $1",
+        [orderId]
+      );
       if (data.rows.length === 0) {
         res.status(404).send();
       } else {
-        const order = await populate(data.rows[0]);
         res.send({
           operation: "success",
           description: "fetched order by id",
-          data: order,
+          data: data.rows[0],
         });
       }
     } catch (e) {
