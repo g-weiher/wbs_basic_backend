@@ -60,5 +60,21 @@ const ordersController = {
       res.status(400).send("something broke");
     }
   },
+  deleteOrder: async (req, res) => {
+    const orderId = req.params.id;
+    if (!orderId) {
+      res.status(400).send("bad request");
+      return;
+    }
+    try {
+      const response = await pool.query("DELETE FROM orders WHERE id=$1", [
+        orderId,
+      ]);
+      res.send();
+    } catch (e) {
+      console.error(e);
+      res.status(400).send("something broke");
+    }
+  },
 };
 module.exports = ordersController;
