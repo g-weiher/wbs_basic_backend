@@ -60,7 +60,24 @@ const usersController = {
     }
   },
   deleteUserById: async (req, res) => {},
-  updateUserById: async (req, res) => {},
+  updateUserById: async (req, res) => {
+    const user = req.body;
+    const id = req.params.id;
+    if (!(user.first_name && user.last_name && user.age)) {
+      res.status(400).send("bad request");
+      return;
+    }
+    try {
+      const response = await pool.query(
+        "UPDATE users SET first_name=$2, last_name=$3, age=$4 WHERE id=$1",
+        [id, user.first_name, user.last_name, user.age]
+      );
+      res.send(response.rows[0]);
+    } catch (e) {
+      console.error(e);
+      res.status(400).send("something broke");
+    }
+  },
 };
 
 module.exports = usersController;
