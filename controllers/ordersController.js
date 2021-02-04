@@ -8,13 +8,16 @@ const ordersController = {
         "SELECT orders.id, orders.price, orders.date, row_to_json(users.*) AS user FROM orders, users WHERE orders.user_id = users.id"
       );
       res.json({
-        operation: "success",
-        description: "fetched orders by id",
+        code: "200",
+        message: "fetched orders by id",
         data: data.rows,
       });
     } catch (e) {
       console.error(e);
-      res.status(400).send();
+      res.status(500).send({
+        code: "400",
+        message: "unexpected error",
+      });
     }
   },
   getOrderById: async (req, res) => {
@@ -29,17 +32,23 @@ const ordersController = {
           [orderId]
         );
         if (data.rows.length === 0) {
-          res.status(404).send();
+          res.status(404).send({
+            code: "404",
+            message: "order not found",
+          });
         } else {
           res.send({
-            operation: "success",
-            description: "fetched order by id",
+            code: 200,
+            message: "fetched order by id",
             data: data.rows[0],
           });
         }
       } catch (e) {
         console.error(e);
-        res.status(400).send("something went wrong");
+        res.status(500).send({
+          code: "500",
+          message: "order not found",
+        });
       }
     }
   },
