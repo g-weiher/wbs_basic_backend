@@ -59,7 +59,22 @@ const usersController = {
       res.status(400).send("something broke");
     }
   },
-  deleteUserById: async (req, res) => {},
+  deleteUserById: async (req, res) => {
+    const userId = req.params.id;
+    if (!userId) {
+      res.status(400).send("bad request");
+      return;
+    }
+    try {
+      const response = await pool.query("DELETE FROM users WHERE id=$1", [
+        userId,
+      ]);
+      res.send();
+    } catch (e) {
+      console.error(e);
+      res.status(400).send("something broke");
+    }
+  },
   updateUserById: async (req, res) => {
     const user = req.body;
     const id = req.params.id;
