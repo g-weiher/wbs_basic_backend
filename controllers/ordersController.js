@@ -76,5 +76,26 @@ const ordersController = {
       res.status(400).send("something broke");
     }
   },
+  updateOrder: async (req, res) => {
+    const orderId = req.params.id;
+    const orderUpdate = req.body;
+    if (
+      !orderId ||
+      !(orderUpdate.price && orderUpdate.date && orderUpdate.user_id)
+    ) {
+      res.status(400).send("bad request");
+      return;
+    }
+    try {
+      const response = await pool.query(
+        "UPDATE orders SET price=$2, date=$3, user_id=$4 WHERE id=$1",
+        [orderId, orderUpdate.price, orderUpdate.date, orderUpdate.user_id]
+      );
+      res.send();
+    } catch (e) {
+      console.error(e);
+      res.status(400).send("something broke");
+    }
+  },
 };
 module.exports = ordersController;
