@@ -42,7 +42,23 @@ const usersController = {
       }
     }
   },
-  addUser: async (req, res) => {},
+  addUser: async (req, res) => {
+    const user = req.body;
+    if (!(user.first_name && user.last_name && user.age)) {
+      res.status(400).send("bad request");
+      return;
+    }
+    try {
+      const response = await pool.query(
+        "INSERT INTO users(first_name,last_name,age) VALUES($1,$2,$3) RETURNING *;",
+        [user.first_name, user.last_name, user.age]
+      );
+      res.send(response.rows[0]);
+    } catch (e) {
+      console.error(e);
+      res.status(400).send("something broke");
+    }
+  },
   deleteUserById: async (req, res) => {},
   updateUserById: async (req, res) => {},
 };
